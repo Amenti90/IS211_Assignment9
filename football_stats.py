@@ -2,6 +2,7 @@ import urllib2
 from bs4 import BeautifulSoup
 import pandas as pd
 import json
+import requests
 import re
 
 #create BeautifulSoup object
@@ -10,9 +11,19 @@ import re
 
 
 
-dfs= pd.read_html("https://www.cbssports.com/nfl/stats/playersort/nfl/year-2018-season-regular-category-touchdowns", header=0)
-for df in dfs:
-    print (df)
+page= requests.get("https://www.cbssports.com/nfl/stats/playersort/nfl/year-2018-season-regular-category-touchdowns")
+bsObj= BeautifulSoup(page.content,"lxml")
+table = bsObj.find_all('table')[0]
+
+dfs= pd.read_html(str(table), header=0)
+frame= dfs[0]
+frame.columns =frame.iloc[1]
+frame2= frame[2:21,[6]]
+
+
+
+print (frame2)
+
 
 # table= bsObj.find_all(class_= {'row1', 'row2'})
 #
