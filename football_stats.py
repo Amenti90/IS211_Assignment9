@@ -1,47 +1,26 @@
 import urllib2
 from bs4 import BeautifulSoup
-import pandas as pd
 import json
-import requests
-import re
 
-#create BeautifulSoup object
-# html = urllib2.urlopen("https://www.cbssports.com/nfl/stats/playersort/nfl/year-2018-season-regular-category-touchdowns")
-# bsObj = BeautifulSoup(html, 'lxml')
+url = "https://www.cbssports.com/nfl/stats/playersort/nfl/year-2018-season-regular-category-touchdowns"
+html= urllib2.urlopen(url)
+soup= BeautifulSoup(html, "lxml")
 
 
 
-page= requests.get("https://www.cbssports.com/nfl/stats/playersort/nfl/year-2018-season-regular-category-touchdowns")
-bsObj= BeautifulSoup(page.content,"lxml")
-table = bsObj.find_all('table')[0]
+#scrape player data
+data_rows= soup.find_all(class_= {'row1', 'row2'})
 
-dfs= pd.read_html(str(table), header=0)
-frame= dfs[0]
-frame.columns =frame.iloc[1]
-frame2= frame[2:21,[6]]
+#scrape the columns
+for column in data_rows[:20]:
+    try:
+        athlete= column.contents[0].getText()
+        pos= column.contents[1].getText()
+        td= column.contents[6].getText()
+        team= column.contents[2].getText()
+        tdplayers= (athlete, pos, td, team)
+        print json.dumps(tdplayers)
 
-
-
-print (frame2)
-
-
-# table= bsObj.find_all(class_= {'row1', 'row2'})
-#
-# for i in table[:20]:
-#     print i
-
-
-
-
-#find and findall in BS book
-#pg 46 BS book, does it show how to iterate through the top 20 items on the website?
-
-# Scrape specific contents
-
-
-# store contents to list
-
-
-
-# print the list
+    except:
+        print 'Nope'
 
