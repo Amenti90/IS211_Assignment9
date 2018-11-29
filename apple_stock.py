@@ -16,7 +16,7 @@ for column in page_rows:
         print json.dumps(stock_info)
 
     except:
-        print 'Nope'
+        print '---'
 
 
 
